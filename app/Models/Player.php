@@ -88,10 +88,19 @@ class Player extends Authenticatable
     }
 
     /**
+     * Get the team player rights.
+     */
+    public function teamPlayerRights()
+    {
+        return TeamPlayerRights::query()->where('accountid', $this->id)->first();
+    }
+
+    /**
      * Get the inventory container
      */
     public function container()
     {
         return ContainerPlayer::query()->where('id', $this->id)->first();
     }
+
 }

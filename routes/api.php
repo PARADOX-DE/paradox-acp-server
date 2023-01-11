@@ -97,7 +97,7 @@ Route::middleware('auth:sanctum')
                         ->prefix("members")
                         ->group(function () {
                             Route::post('/', 'list');
-                            Route::post('/delete', 'delete');
+                            Route::post('/get', 'get');
                         });
 
                     Route::controller(TeamVehiclesController::class)

@@ -10,6 +10,7 @@ use App\Http\Resources\Core\CallbackMessageResource;
 use App\Http\Resources\Player\PlayerInventoryAddedItemResource;
 use App\Http\Resources\Player\PlayerResource;
 use App\Http\Resources\Profile\ProfileInfoResource;
+use App\Http\Resources\Team\TeamMemberResource;
 use App\Http\Services\Auth\AuthLoginService;
 use App\Models\AdminRank;
 use App\Models\LogKill;
@@ -63,7 +64,7 @@ class TeamMembersController extends Controller
         );
     }
 
-    public function delete(Request $request, int $id): CallbackMessageResource
+    public function get(Request $request, int $id): TeamMemberResource
     {
         /** @var Team $team */
         $team = $this->teamRepository::query()
@@ -72,13 +73,11 @@ class TeamMembersController extends Controller
 
         $playerId = $request->get('player');
 
-        $this->playerRepository::query()
+        $player = $this->playerRepository::query()
             ->where('id', $playerId)
-            ->update([
-                'team' => 0,
-                'rang' => 0
-            ]);
+            ->where('team', $team->id)
+            ->first();
 
-        return CallbackMessageResource::make("Spieler wurde aus Fraktion entlassen.");
+        return TeamMemberResource::make($player);
     }
 }
