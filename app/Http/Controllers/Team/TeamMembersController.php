@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Team;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthLoginRequest;
 use App\Http\Requests\Core\DatagridFilterRequest;
+use App\Http\Requests\Team\TeamMemberRequest;
 use App\Http\Resources\Auth\AuthLoginResource;
 use App\Http\Resources\Core\CallbackMessageResource;
 use App\Http\Resources\Player\PlayerInventoryAddedItemResource;
@@ -64,20 +65,39 @@ class TeamMembersController extends Controller
         );
     }
 
-    public function get(Request $request, int $id): TeamMemberResource
+    public function get(TeamMemberRequest $request, int $id): TeamMemberResource
     {
         /** @var Team $team */
         $team = $this->teamRepository::query()
             ->where('id', $id)
             ->first(['id']);
 
-        $playerId = $request->get('player');
-
         $player = $this->playerRepository::query()
-            ->where('id', $playerId)
+            ->where('id', $request->get('player'))
             ->where('team', $team->id)
             ->first();
 
         return TeamMemberResource::make($player);
+    }
+
+    public function add(TeamMemberRequest $request, int $id): CallbackMessageResource
+    {
+        /** @var Team $team */
+        $team = $this->teamRepository::query()
+            ->where('id', $id)
+            ->first(['id', "name"]);
+
+        $playerId = $request->get('player');
+
+        $playerQueryBuilder = $this->playerRepository::query();
+
+        if(is_numeric($playerId))
+            $playerQueryBuilder->where('id', $request->get('player'));
+        else
+            $playerQueryBuilder->where('Name', $request->get('player'));
+
+        $player = $playerQueryBuilder->first();
+
+        return new CallbackMessageResource("{$player} in die Fraktion {$team->name} hinzugefügt.");
     }
 }
