@@ -34,7 +34,10 @@ class PlayerResource extends JsonResource
             'job' => $this->job,
             'cuffed' => $this->isCuffed,
             'tied' => $this->isTied,
+            
             'faction' => $this->faction()->name,
+            'factionId' => $this->faction()->id,
+
             'phoneNumber' => $this->handy <= 0 ? (1275 + $this->id) : $this->handy,
 
             'socialClubName' => $this->SCName,
